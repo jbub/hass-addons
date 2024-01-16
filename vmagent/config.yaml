@@ -2,7 +2,7 @@
 name: vmagent
 version: "v0.1.0"
 slug: vmagent
-description: Agent which helps you collect metrics from various sources, relabel and filter the collected metrics and store them in VictoriaMetrics or any other storage systems via Prometheus remote_write protocol or via VictoriaMetrics remote_write protocol.
+description: Collect Home Assistant prometheus metrics and store them to remote systems via remote_write protocol.
 init: false
 map:
   - share:rw
