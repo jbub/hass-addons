@@ -21,6 +21,7 @@ Otherwise:
 Once the add-on is installed:
 
 * Read the add-on documentation
+* Enable the Home Assistant Prometheus integration https://www.home-assistant.io/integrations/prometheus/
 * Generate a Long-Lived Access Tokens in your Home Assistant profile and set it up as `longelivedToken`
 * Configure your remote write target using `remoteWriteUrl`, `remoteWriteUsername` and `remoteWritePassword`
 * Configure your `homeassistantUrl` to your local Home Assistant url (http://homeassistant.local:8123)
