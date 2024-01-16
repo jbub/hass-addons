@@ -1,0 +1,19 @@
+#!/usr/bin/env bashio
+
+REMOTE_WRITE_URL=$(bashio::config 'remoteWriteUrl')
+
+REMOTE_WRITE_AUTH=""
+if ! bashio::config.is_empty "remoteWriteUsername"
+then
+    REMOTE_WRITE_AUTH="-remoteWrite.basicAuth.username=$(bashio::config 'remoteWriteUsername') -remoteWrite.basicAuth.password=$(bashio::config 'remoteWritePassword')"
+fi
+
+SCHEME="http"
+if bashio::config.true 'prometheusScrapeHTTPS'
+then
+    SCHEME="https"
+fi
+
+echo '{"token": "'$(bashio::config 'longelivedToken')'", "scheme": "'$SCHEME'", "homeassistantUrl": "'$(bashio::config 'homeassistantUrl')'", "prometheusScrapeInterval": "'$(bashio::config 'prometheusScrapeInterval')'", "prometheusScrapeTimeout": "'$(bashio::config 'prometheusScrapeTimeout')'"}' | tempio -template /prometheus.tpl -out /prometheus.yml
+
+"/vmagent-prod" -remoteWrite.url="${REMOTE_WRITE_URL}" -remoteWrite.tmpDataPath=/share/vmagent-data -promscrape.config=/prometheus.yml $REMOTE_WRITE_AUTH

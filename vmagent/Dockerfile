@@ -1,0 +1,26 @@
+# https://developers.home-assistant.io/docs/add-ons/configuration#add-on-dockerfile
+ARG BUILD_FROM
+FROM $BUILD_FROM
+
+COPY start-vmagent /
+COPY prometheus.tpl /
+WORKDIR /share/vmagent-data
+ARG VERSION=v1.96.0
+
+RUN /bin/bash -c 'set -ex && \
+    ARCH=$(uname -m) && \
+    if [ "$ARCH" == "x86_64" ]; then \
+    wget https://github.com/VictoriaMetrics/VictoriaMetrics/releases/download/$VERSION/vmutils-linux-amd64-$VERSION.tar.gz -qO- | tar xvz -C /; \
+    elif [[ "$ARCH" == "arm"* ]]; then \
+    wget https://github.com/VictoriaMetrics/VictoriaMetrics/releases/download/$VERSION/vmutils-linux-arm-$VERSION.tar.gz -qO- | tar xvz -C /; \
+    elif [ "$ARCH" == "aarch64" ]; then \
+    wget https://github.com/VictoriaMetrics/VictoriaMetrics/releases/download/$VERSION/vmutils-linux-arm64-$VERSION.tar.gz -qO- | tar xvz -C /; \
+    else \
+    echo "Unsupported architecture $ARCH"; \
+    return -1; \
+    fi'
+
+RUN chmod a+x /start-vmagent
+RUN chmod a+x /vmagent-prod
+
+ENTRYPOINT ["/start-vmagent"]

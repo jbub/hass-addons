@@ -1,0 +1,32 @@
+# https://developers.home-assistant.io/docs/add-ons/configuration#add-on-config
+name: vmagent
+version: "v0.1.0"
+slug: vmagent
+description: Agent which helps you collect metrics from various sources, relabel and filter the collected metrics and store them in VictoriaMetrics or any other storage systems via Prometheus remote_write protocol or via VictoriaMetrics remote_write protocol.
+init: false
+map:
+  - share:rw
+arch:
+  - aarch64
+  - armv7
+  - armhf
+  - amd64
+  - i386
+options:
+  remoteWriteUrl: ""
+  remoteWriteUsername: ""
+  remoteWritePassword: ""
+  prometheusScrapeHTTPS: false
+  prometheusScrapeInterval: "20s"
+  prometheusScrapeTimeout: "15s"
+  longelivedToken: ""
+  homeassistantUrl: ""
+schema:
+  remoteWriteUrl: "str"
+  remoteWriteUsername: "password?"
+  remoteWritePassword: "password?"
+  prometheusScrapeHTTPS: bool
+  prometheusScrapeInterval: "str?"
+  prometheusScrapeTimeout: "str?"
+  longelivedToken: "password"
+  homeassistantUrl: "str"
