@@ -12,3 +12,9 @@ scrape_configs:
     scheme: {{.scheme}}
     static_configs:
       - targets: ['{{.homeassistantUrl}}']
+        {{- if .prometheusStaticLabels}}
+        labels:
+          {{- range .prometheusStaticLabels }}
+          {{ .key }}: "{{ .value }}"
+          {{- end }}
+        {{- end }}

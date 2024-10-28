@@ -19,6 +19,7 @@ options:
   prometheusScrapeHTTPS: false
   prometheusScrapeInterval: "20s"
   prometheusScrapeTimeout: "15s"
+  prometheusStaticLabels: []
   longelivedToken: ""
   homeassistantUrl: ""
 schema:
@@ -28,5 +29,8 @@ schema:
   prometheusScrapeHTTPS: bool
   prometheusScrapeInterval: "str?"
   prometheusScrapeTimeout: "str?"
+  prometheusStaticLabels:
+    - key: "str"
+      value: "str"
   longelivedToken: "password"
   homeassistantUrl: "str"

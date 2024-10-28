@@ -14,6 +14,12 @@ then
     SCHEME="https"
 fi
 
-echo '{"token": "'$(bashio::config 'longelivedToken')'", "scheme": "'$SCHEME'", "homeassistantUrl": "'$(bashio::config 'homeassistantUrl')'", "prometheusScrapeInterval": "'$(bashio::config 'prometheusScrapeInterval')'", "prometheusScrapeTimeout": "'$(bashio::config 'prometheusScrapeTimeout')'"}' | tempio -template /prometheus.tpl -out /prometheus.yml
+STATIC_LABELS="{}"
+if ! bashio::config.is_empty "prometheusStaticLabels"
+then
+    STATIC_LABELS=$(bashio::config "prometheusStaticLabels" | jq -c 'map({(.key): .value}) | add')
+fi
+
+echo '{"token": "'$(bashio::config 'longelivedToken')'", "scheme": "'$SCHEME'", "homeassistantUrl": "'$(bashio::config 'homeassistantUrl')'", "prometheusScrapeInterval": "'$(bashio::config 'prometheusScrapeInterval')'", "prometheusScrapeTimeout": "'$(bashio::config 'prometheusScrapeTimeout')'", "prometheusStaticLabels": '"$STATIC_LABELS"'}' | tempio -template /prometheus.tpl -out /prometheus.yml
 
 "/vmagent-prod" -remoteWrite.url="${REMOTE_WRITE_URL}" -remoteWrite.tmpDataPath=/share/vmagent-data -promscrape.config=/prometheus.yml $REMOTE_WRITE_AUTH
