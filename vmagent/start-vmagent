@@ -14,16 +14,28 @@ then
     SCHEME="https"
 fi
 
-STATIC_LABELS="{}"
-if ! bashio::config.is_empty "prometheusStaticLabels"
+if ! bashio::config.is_empty "prometheusStaticLabels"; 
 then
-    PROMETHEUS_LABELS=$(bashio::config "prometheusStaticLabels")
+    # Create an empty array for concatenation
+    STATIC_LABEL_ARRAY=()
 
-    bashio::log.info "prometheusStaticLabels: ${PROMETHEUS_LABELS}"
-    
-    STATIC_LABELS=$(echo "$PROMETHEUS_LABELS" | jq -s '[.[][]] | map({(.key): .value}) | add')
+    # Loop through each label
+    for label in $(bashio::config 'prometheusStaticLabels|keys'); do
+        # Extract key and value using bashio::config
+        KEY=$(bashio::config "prometheusStaticLabels[${label}].key")
+        VALUE=$(bashio::config "prometheusStaticLabels[${label}].value")
+
+        # Construct a JSON string for the current label
+        LABEL_JSON="{\"${KEY}\": \"${VALUE}\"}"
+
+        # Append to the array
+        STATIC_LABEL_ARRAY+=("$LABEL_JSON")
+    done
+
+    # Join all the JSON strings with commas to create a valid JSON array
+    STATIC_LABELS=$(IFS=,; echo "[${STATIC_LABEL_ARRAY[*]}]")
 fi
 
-echo '{"token": "'$(bashio::config 'longelivedToken')'", "scheme": "'$SCHEME'", "homeassistantUrl": "'$(bashio::config 'homeassistantUrl')'", "prometheusScrapeInterval": "'$(bashio::config 'prometheusScrapeInterval')'", "prometheusScrapeTimeout": "'$(bashio::config 'prometheusScrapeTimeout')'", "prometheusStaticLabels": '"$STATIC_LABELS"'}' | tempio -template /prometheus.tpl -out /prometheus.yml
+echo '{"token": "'$(bashio::config 'longelivedToken')'", "scheme": "'$SCHEME'", "homeassistantUrl": "'$(bashio::config 'homeassistantUrl')'", "prometheusScrapeInterval": "'$(bashio::config 'prometheusScrapeInterval')'", "prometheusScrapeTimeout": "'$(bashio::config 'prometheusScrapeTimeout')'", "prometheusStaticLabels": $STATIC_LABELS}' | tempio -template /prometheus.tpl -out /prometheus.yml
 
 "/vmagent-prod" -remoteWrite.url="${REMOTE_WRITE_URL}" -remoteWrite.tmpDataPath=/share/vmagent-data -promscrape.config=/prometheus.yml $REMOTE_WRITE_AUTH
