@@ -1,6 +1,6 @@
 # https://developers.home-assistant.io/docs/add-ons/configuration#add-on-config
 name: vmagent
-version: "v0.3.1"
+version: "v0.3.2"
 slug: vmagent
 description: Collect Home Assistant prometheus metrics and store them to remote systems via remote_write protocol.
 init: false
