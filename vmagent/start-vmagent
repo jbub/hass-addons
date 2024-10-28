@@ -17,7 +17,11 @@ fi
 STATIC_LABELS="{}"
 if ! bashio::config.is_empty "prometheusStaticLabels"
 then
-    STATIC_LABELS=$(bashio::config "prometheusStaticLabels" | jq -c 'map({(.key): .value}) | add')
+    PROMETHEUS_LABELS=$(bashio::config "prometheusStaticLabels")
+
+    bashio::log.info "prometheusStaticLabels: ${PROMETHEUS_LABELS}"
+    
+    STATIC_LABELS=$(echo "$PROMETHEUS_LABELS" | jq -c 'map({(.key): .value}) | add')
 fi
 
 echo '{"token": "'$(bashio::config 'longelivedToken')'", "scheme": "'$SCHEME'", "homeassistantUrl": "'$(bashio::config 'homeassistantUrl')'", "prometheusScrapeInterval": "'$(bashio::config 'prometheusScrapeInterval')'", "prometheusScrapeTimeout": "'$(bashio::config 'prometheusScrapeTimeout')'", "prometheusStaticLabels": '"$STATIC_LABELS"'}' | tempio -template /prometheus.tpl -out /prometheus.yml
