@@ -19,14 +19,18 @@ options:
   prometheusScrapeHTTPS: false
   prometheusScrapeInterval: "20s"
   prometheusScrapeTimeout: "15s"
+  prometheusStaticLabelKey: ""
+  prometheusStaticLabelValue: ""
   longelivedToken: ""
   homeassistantUrl: ""
 schema:
   remoteWriteUrl: "str"
   remoteWriteUsername: "password?"
   remoteWritePassword: "password?"
-  prometheusScrapeHTTPS: bool
+  prometheusScrapeHTTPS: "bool"
   prometheusScrapeInterval: "str?"
   prometheusScrapeTimeout: "str?"
+  prometheusStaticLabelKey: "str?"
+  prometheusStaticLabelValue: "str?"
   longelivedToken: "password"
   homeassistantUrl: "str"
